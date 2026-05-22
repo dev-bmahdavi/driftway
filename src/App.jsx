@@ -251,7 +251,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
   };
 
   const handleSelect = (feature) => {
-    onSelect(feature.place_name.replace(/, United States$/,"").trim(), feature.center);
+    onSelect(feature.place_name.replace(/, [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").replace(/,\s*,$/, "").trim(), feature.center);
     setSuggestions([]);
     setOpen(false);
   };
@@ -285,7 +285,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
               className={`autocomplete-item${i === highlighted ? ' highlighted' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); handleSelect(s); }}
             >
-              {s.place_name.replace(/, United States$/, "").trim()}
+              {s.place_name.replace(/, [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").replace(/,\s*,$/, "").trim()}
             </div>
           ))}
         </div>

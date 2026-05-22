@@ -30,7 +30,7 @@ const styles = `
   .intro-headline em { font-style: italic; color: var(--rust); }
   .intro-desc { font-size: 13px; color: var(--ink-light); line-height: 1.7; margin-bottom: 28px; border-top: 1px solid var(--border); padding-top: 14px; }
 
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
   .form-label { font-family: 'Josefin Sans', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-light); font-weight: 600; }
   .form-input, .form-select { padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 3px; background: var(--parchment); font-family: 'Libre Baskerville', serif; font-size: 14px; color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s; outline: none; width: 100%; }
@@ -58,7 +58,7 @@ const styles = `
   /* STOP COUNT SLIDER */
   .slider-section { margin-bottom: 20px; }
   .slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-  .slider-value { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--rust); }
+  .slider-value { font-family: "Playfair Display", serif; font-size: 22px; font-weight: 900; color: white; background: var(--rust); border-radius: 20px; padding: 2px 12px; min-width: 40px; text-align: center; }
   .range-input { width: 100%; height: 4px; border-radius: 2px; background: var(--border); outline: none; -webkit-appearance: none; cursor: pointer; }
   .range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--rust); cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
   .range-input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--rust); cursor: pointer; border: none; }
@@ -167,7 +167,7 @@ const styles = `
   @media (max-width: 900px) {
     .header { padding: 16px 20px; }
     .intro-card { padding: 28px 20px; }
-    .form-row { grid-template-columns: 1fr; }
+    
     .final-body { grid-template-columns: 1fr; }
     .map-panel { position: static; }
     .trip-big-title { font-size: 28px; }
@@ -251,7 +251,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
   };
 
   const handleSelect = (feature) => {
-    onSelect(feature.place_name, feature.center);
+    onSelect(feature.place_name.replace(/, United States$/,"").trim(), feature.center);
     setSuggestions([]);
     setOpen(false);
   };
@@ -285,7 +285,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
               className={`autocomplete-item${i === highlighted ? ' highlighted' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); handleSelect(s); }}
             >
-              {s.place_name}
+              {s.place_name.replace(/, United States$/, "").trim()}
             </div>
           ))}
         </div>

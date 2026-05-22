@@ -432,8 +432,24 @@ Respond ONLY with valid JSON, no markdown:
     try {
       const parsed = await callAI(prompt);
       setItinerary(parsed);
+      // Build a lookup of known coords: origin, destination, and custom waypoints
+      const knownCoords = {};
+      if (origin.coords) knownCoords[origin.text.toLowerCase()] = origin.coords;
+      if (destination.coords) knownCoords[destination.text.toLowerCase()] = destination.coords;
+      waypoints.forEach(w => { if (w.coords && w.text) knownCoords[w.text.toLowerCase()] = w.coords; });
+
       const geocoded = await Promise.all(
-        parsed.stops.map(async (stop) => {
+        parsed.stops.map(async (stop, i) => {
+          const isFirst = i === 0;
+          const isLast = i === parsed.stops.length - 1;
+          // Use stored coords for origin/destination
+          if (isFirst && origin.coords) return { ...stop, coords: origin.coords };
+          if (isLast && destination.coords) return { ...stop, coords: destination.coords };
+          // Check if this stop matches a custom waypoint by name
+          const nameKey = stop.name.toLowerCase();
+          const waypointMatch = Object.keys(knownCoords).find(k => nameKey.includes(k.split(',')[0].toLowerCase()) || k.includes(nameKey.split(',')[0].toLowerCase()));
+          if (waypointMatch) return { ...stop, coords: knownCoords[waypointMatch] };
+          // Fall back to geocoding for AI-suggested stops
           const results = await geocodeSearch(stop.name + ", USA");
           return { ...stop, coords: results[0]?.center || null };
         })

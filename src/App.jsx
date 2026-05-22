@@ -204,7 +204,7 @@ async function callAI(prompt) {
   return JSON.parse(clean);
 }
 
-export default function Scenica() {
+export default function Driftway() {
   const [phase, setPhase] = useState("intro");
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
@@ -282,7 +282,7 @@ Respond ONLY with valid JSON, no markdown:
       <style>{styles}</style>
       <div className="app">
         <header className="header">
-          <div className="header-title">Sc<span>e</span>nica</div>
+          <div className="header-title">Drift<span>w</span>ay</div>
           <div className="header-sub">Scenic Route Builder</div>
         </header>
         <main className="main">

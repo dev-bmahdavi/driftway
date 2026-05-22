@@ -251,7 +251,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
   };
 
   const handleSelect = (feature) => {
-    onSelect(feature.place_name.replace(/, [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").replace(/,\s*,$/, "").trim(), feature.center);
+    onSelect(feature.place_name.replace(/ [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").trim(), feature.center);
     setSuggestions([]);
     setOpen(false);
   };
@@ -285,7 +285,7 @@ function AutocompleteInput({ value, onChange, onSelect, placeholder }) {
               className={`autocomplete-item${i === highlighted ? ' highlighted' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); handleSelect(s); }}
             >
-              {s.place_name.replace(/, [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").replace(/,\s*,$/, "").trim()}
+              {s.place_name.replace(/ [0-9]{5}(-[0-9]{4})?/g, "").replace(/, United States$/, "").trim()}
             </div>
           ))}
         </div>
@@ -434,7 +434,7 @@ Respond ONLY with valid JSON, no markdown:
       setItinerary(parsed);
       const geocoded = await Promise.all(
         parsed.stops.map(async (stop) => {
-          const results = await geocodeSearch(stop.name);
+          const results = await geocodeSearch(stop.name + ", USA");
           return { ...stop, coords: results[0]?.center || null };
         })
       );
@@ -483,29 +483,24 @@ Respond ONLY with valid JSON, no markdown:
               <h1 className="intro-headline">The road less<br /><em>optimized.</em></h1>
               <p className="intro-desc">Enter your route, add stops, and we'll suggest scenic detours and hidden gems — then build a full itinerary around the ones you choose.</p>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Starting Point</label>
-                  <AutocompleteInput value={origin.text} onChange={(t) => setOrigin({ text: t, coords: null })} onSelect={(t, c) => setOrigin({ text: t, coords: c })} placeholder="e.g. Portland, OR" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Destination</label>
-                  <AutocompleteInput value={destination.text} onChange={(t) => setDestination({ text: t, coords: null })} onSelect={(t, c) => setDestination({ text: t, coords: c })} placeholder="e.g. San Francisco, CA" />
-                </div>
+              <div className="form-group" style={{ marginBottom: 16 }}>
+                <label className="form-label">Starting Point</label>
+                <AutocompleteInput value={origin.text} onChange={(t) => setOrigin({ text: t, coords: null })} onSelect={(t, c) => setOrigin({ text: t, coords: c })} placeholder="e.g. Portland, OR" />
               </div>
 
-              {waypoints.length > 0 && (
-                <div className="waypoints-section">
-                  {waypoints.map((wp, i) => (
-                    <div key={i} className="waypoint-row">
-                      <span className="waypoint-label">Stop {i + 1}</span>
-                      <AutocompleteInput value={wp.text} onChange={(t) => updateWaypoint(i, t)} onSelect={(t, c) => updateWaypoint(i, t, c)} placeholder={`Enter location`} />
-                      <button className="remove-btn" onClick={() => removeWaypoint(i)}>×</button>
-                    </div>
-                  ))}
+              {waypoints.map((wp, i) => (
+                <div key={i} className="waypoint-row" style={{ marginBottom: 12 }}>
+                  <span className="waypoint-label">Stop {i + 1}</span>
+                  <AutocompleteInput value={wp.text} onChange={(t) => updateWaypoint(i, t)} onSelect={(t, c) => updateWaypoint(i, t, c)} placeholder="Enter location" />
+                  <button className="remove-btn" onClick={() => removeWaypoint(i)}>×</button>
                 </div>
-              )}
+              ))}
               <button className="add-stop-btn" onClick={addWaypoint}>+ Add a stop</button>
+
+              <div className="form-group" style={{ marginBottom: 16 }}>
+                <label className="form-label">Destination</label>
+                <AutocompleteInput value={destination.text} onChange={(t) => setDestination({ text: t, coords: null })} onSelect={(t, c) => setDestination({ text: t, coords: c })} placeholder="e.g. San Francisco, CA" />
+              </div>
 
               <div className="days-row">
                 <div className="form-group">
